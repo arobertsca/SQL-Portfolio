@@ -21,5 +21,5 @@ INSERT INTO store VALUES (15, "Scarves", 3, 15, 90);
 --Now let's display the database showing the item and price, by price:
 SELECT item, price FROM store ORDER BY price;
 
---Let's find out how many of each item can be found on each floor:
+--Let's find out how many of items total can be found on each floor:
 SELECT floor, SUM(quantity) FROM store GROUP BY floor;
