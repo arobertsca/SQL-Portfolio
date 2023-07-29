@@ -1,4 +1,4 @@
---I wanted to create a clothing boutique database containing information on the item, what floor it may be found on, the quantity of each item, and the price in dollars.
+--I wanted to create a made-up (by me!) clothing boutique database containing information on the item, what floor it may be found on, the quantity of each item, and the price in dollars.
 
 CREATE TABLE store (id INTEGER PRIMARY KEY, item TEXT, floor INTEGER, quantity INTEGER, price INTEGER);
 
