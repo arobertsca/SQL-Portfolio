@@ -1,0 +1,72 @@
+/* Let's use join clauses to query some data!
+
+I'm going to create 3 tables with information on some actors (name, age), some films, as well as a table of any actors married to eachother */
+
+CREATE TABLE actors (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    age INTEGER);
+    
+INSERT INTO actors (name, age) VALUES ("Ryan Reynolds", 46);
+INSERT INTO actors (name, age) VALUES ("Eva Mendes", 49);
+INSERT INTO actors (name, age) VALUES ("Will Smith", 52);
+INSERT INTO actors (name, age) VALUES ("Jada Pinkett Smith", 51);
+INSERT INTO actors (name, age) VALUES ("Keanu Reeves", 58);
+INSERT INTO actors (name, age) VALUES ("Ryan Gosling", 42);
+INSERT INTO actors (name, age) VALUES ("Viola Davis", 58);
+INSERT INTO actors (name, age) VALUES ("Blake Lively", 35);
+INSERT INTO actors (name, age) VALUES ("Timothée Chalamet", 27);
+INSERT INTO actors (name, age) VALUES ("Simu Liu", 34);
+INSERT INTO actors (name, age) VALUES ("Margot Robbie", 33);
+INSERT INTO actors (name, age) VALUES ("Dwayne Johnson", 51);
+
+CREATE TABLE films (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    actor_id INTEGER,
+    film_name TEXT);
+    
+INSERT INTO films (actor_id, film_name) VALUES (9, "Dune");
+INSERT INTO films (actor_id, film_name) VALUES (6, "Barbie");
+INSERT INTO films (actor_id, film_name) VALUES (10, "Barbie");
+INSERT INTO films (actor_id, film_name) VALUES (11, "Barbie");
+INSERT INTO films (actor_id, film_name) VALUES (1, "Green Lantern");
+INSERT INTO films (actor_id, film_name) VALUES (8, "Green Lantern");
+INSERT INTO films (actor_id, film_name) VALUES (2, "The Place Beyond the Pines");
+INSERT INTO films (actor_id, film_name) VALUES (6, "The Place Beyond the Pines");
+INSERT INTO films (actor_id, film_name) VALUES (3, "Ali");
+INSERT INTO films (actor_id, film_name) VALUES (4, "Ali");
+INSERT INTO films (actor_id, film_name) VALUES (3, "Hitch");
+INSERT INTO films (actor_id, film_name) VALUES (2, "Hitch");
+INSERT INTO films (actor_id, film_name) VALUES (5, "The Matrix");
+
+CREATE TABLE married_actors (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    person1_id INTEGER,
+    person2_id INTEGER);
+    
+INSERT INTO married_actors (person1_id, person2_id) VALUES (1, 8);
+INSERT INTO married_actors (person1_id, person2_id) VALUES (2, 6);
+INSERT INTO married_actors (person1_id, person2_id) VALUES (3, 4);
+
+/* First, I want to see what actors starred in the movies from the films table using INNER JOIN*/
+
+SELECT actors.name, films.film_name FROM actors
+    JOIN films
+    ON actors.id = films.actor_id;
+    
+/* Since the query didn't include actors that didn't star in those movies, let's use a LEFT OUTER JOIN to find out who */
+
+SELECT actors.name, films.film_name FROM actors
+    LEFT OUTER JOIN films
+    ON actors.id = films.actor_id
+    ORDER BY film_name asc;
+    
+/* Viola Davis and Dwayne 'The Rock' Johnson weren't in any of those movies! Now let's take things further and use multiple JOINs to see which actors are married to eachother from this list */
+
+SELECT a.name, b.name FROM married_actors
+    JOIN actors a
+    ON married_actors.person1_id = a.id
+    JOIN actors b
+    ON married_actors.person2_id = b.id;
+
+/* There are 3 married couples here, very cool! */
