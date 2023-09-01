@@ -1,0 +1,40 @@
+/*
+In this project I will use this Spotify dataset from Kaggle: https://www.kaggle.com/equinxx/spotify-top-50-songs-in-2021?select=spotify_top50_2021.csv
+
+I created a table to add the data into and made some queries using SQL.
+*/
+
+-- What is the average danceability by artist and track?
+SELECT artist_name, track_name, avg(danceability) as avg_danceability FROM BIT_DB.Spotifydata
+    GROUP BY artist_name, track_name
+    ORDER BY avg_danceability desc
+
+-- Who are the top 10 artists based on popularity?
+SELECT artist_name, popularity FROM BIT_DB.Spotifydata
+    ORDER BY popularity desc
+    LIMIT 10
+
+-- What artist released the longest song?
+SELECT artist_name, track_name, duration_ms FROM BIT_DB.Spotifydata
+    WHERE duration_ms in (SELECT max(duration_ms) FROM BIT_DB.Spotifydata)
+
+-- What's the average danceability for the 10 most popular songs?
+SELECT artist_name, track_name, avg(danceability) as avg_danceability, popularity FROM BIT_DB.Spotifydata
+    GROUP BY track_name
+    ORDER BY popularity desc
+    LIMIT 10
+
+-- What songs were faster, slower or average in tempo?
+SELECT artist_name, track_name, tempo, CASE
+    WHEN tempo > (SELECT round(avg(tempo)) FROM BIT_DB.Spotifydata) THEN "Faster"
+    WHEN tempo = (SELECT round(avg(tempo)) FROM BIT_DB.Spotifydata) THEN "Average"
+    WHEN tempo < (SELECT round(avg(tempo)) FROM BIT_DB.Spotifydata) THEN "Slower"
+    END tempo_rating
+    FROM BIT_DB.Spotifydata
+    ORDER BY tempo desc
+
+-- What artists had 3 or more songs in the top 50?
+SELECT artist_name, count(track_name) hits FROM BIT_DB.Spotifydata
+    GROUP BY artist_name
+    HAVING hits >= 3
+    ORDER BY hits desc
