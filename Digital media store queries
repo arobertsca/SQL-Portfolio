@@ -1,0 +1,94 @@
+-- Using a dataset called 'chinook', which contains information on a digital media store (tables for artists, albums, media tracks, invoices, and customers), let's answer some questions about the data.
+
+-- Show Customers (their full names, customer ID, and country) who are not in the US. (Hint: != or <> can be used to say "is not equal to").
+SELECT customerId, FirstName, LastName, Country FROM chinook.customers
+    WHERE Country <> 'USA';
+
+-- Show only the Customers from Brazil.
+SELECT customerId, FirstName, LastName, Country FROM chinook.customers
+    WHERE Country = 'Brazil';
+
+-- Find the Invoices of customers who are from Brazil. The resulting table should show the customer's full name, Invoice ID, Date of the invoice, and billing country.
+SELECT cus.FirstName, cus.LastName, inv.InvoiceId, inv.InvoiceDate, inv.BillingCountry
+    FROM chinook.invoices as inv
+    LEFT JOIN chinook.customers as cus
+    ON inv.CustomerId = cus.CustomerId
+    WHERE inv.Country = 'Brazil';
+    
+--Show the Employees who are Sales Agents.
+SELECT * FROM chinook.employees
+    WHERE Title = 'Sales Support Agent';
+    
+--Find a unique/distinct list of billing countries from the Invoice table.
+SELECT distinct BillingCountry FROM chinook.invoices;
+
+--Provide a query that shows the invoices associated with each sales agent. The resulting table should include the Sales Agent's full name.
+SELECT inv.invoiceId, emp.FirstName, emp.LastName
+FROM chinook.employees as emp
+    INNER JOIN chinook.customers as cus
+        ON cus.SupportRepId = emp.EmployeeId
+    INNER JOIN chinook.invoices as inv
+        ON inv.CustomerId = cus.CustomerId;
+
+--Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.
+SELECT inv.Total, cus.FirstName, cus.LastName, cus.Country, emp.FirstName, emp.LastName
+FROM chinook.employees as emp
+    INNER JOIN chinook.customers as cus
+        ON cus.SupportRepId = emp.EmployeeId
+    INNER JOIN chinook.invoices as inv
+        ON inv.CustomerId = cus.CustomerId;
+
+--How many Invoices were there in 2009?
+SELECT COUNT(*) FROM chinook.invoices
+    WHERE InvoiceDate like '2009%';
+    
+--What are the total sales for 2009?
+SELECT SUM(Total) FROM chinook.invoices
+    WHERE InvoiceDate like '2009%';
+    
+--Write a query that includes the purchased track name with each invoice line ID.
+SELECT trk.Name, invi.InvoiceLineId
+    FROM chinook.invoice_items invi
+    INNER JOIN chinook.tracks trk
+    ON invi.TrackId = trk.TrackId;
+    
+--Write a query that includes the purchased track name AND artist name with each invoice line ID.
+SELECT art.name as Artist, t.Name as Track, i.InvoiceLineId
+    FROM chinook.invoice_items i
+    LEFT JOIN chinook.tracks t
+        ON i.TrackId = t.TrackId
+    INNER JOIN chinook.albums alb
+        ON alb.AlbumId = t.AlbumId
+    LEFT JOIN chinook.artists art
+        ON art.ArtistId = alb.ArtistId;
+
+--Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+SELECT trk.Name AS 'Name', alb.Title as 'Album Title', mt.Name as 'Media Type', gen.Name as 'Genre'
+FROM chinook.tracks trk
+INNER JOIN chinook.media_types mt
+    ON mt.MediaTypeId = trk.MediaTypeId
+INNER JOIN chinook.genres gen
+    ON gen.GenreId = trk.GenreId
+INNER JOIN chinook.albums alb
+    ON alb.albumId = trk.AlbumId;
+    
+--Show the total sales made by each sales agent.
+SELECT emp.FirstName, emp.LastName, ROUND(SUM(inv.Total), 2) as 'Total Sales'
+    FROM chinook.employees emp
+    INNER JOIN chinook.customers cus
+        ON cus.SupportRepId = emp.EmployeeId
+    INNER JOIN chinook.invoices inv
+        ON inv.CustomerId = cus.CustomerId
+    WHERE emp.Title = 'Sales Support Agent'
+    GROUP BY emp.FirstName;
+    
+--Which sales agent made the most dollars in sales in 2009?
+SELECT emp.FirstName, emp.LastName, ROUND(SUM(inv.Total), 2) as 'Total Sales'
+    FROM chinook.employees emp
+    INNER JOIN chinook.customers cus
+        ON cus.SupportRepId = emp.EmployeeId
+    INNER JOIN chinook.invoices inv
+        ON inv.CustomerId = cus.CustomerId
+    WHERE emp.Title = 'Sales Support Agent' AND inv.InvoiceDate like '2009%'
+    GROUP BY emp.FirstName
+    ORDER BY 'Total Sales' DESC LIMIT 1;
