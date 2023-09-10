@@ -1,6 +1,6 @@
 -- Using a dataset called 'chinook', which contains information on a digital media store (tables for artists, albums, media tracks, invoices, and customers), let's answer some questions about the data.
 
--- Show Customers (their full names, customer ID, and country) who are not in the US. (Hint: != or <> can be used to say "is not equal to").
+-- Show Customers (their full names, customer ID, and country) who are not in the US.
 SELECT customerId, FirstName, LastName, Country FROM chinook.customers
     WHERE Country <> 'USA';
 
